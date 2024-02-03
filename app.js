@@ -68,6 +68,13 @@
             inputFieldInactive();
         };
 
+        if ($type == 'textarea') {
+            $inputField.oninput = function (e) {
+                console.log(e.currentTarget.value)
+                adjustTextareaHeight($inputField);
+            }
+        }
+
         // Functions
         function charactersCurrent($e) {
             $charactersCurrent.textContent = $e.currentTarget.value.length;
@@ -165,6 +172,13 @@
                 $tooltip.style.left = `${ $left }px`;
                 $tooltip.style.top = `${ $top }px`;
             }
+        }
+
+        function adjustTextareaHeight(textarea) {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+            const inputBox = textarea.closest(".input__box");
+            inputBox.style.height = textarea.style.height;
         }
 
 
