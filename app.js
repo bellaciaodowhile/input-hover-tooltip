@@ -70,9 +70,14 @@
 
         if ($type == 'textarea') {
             $inputField.oninput = function (e) {
-                console.log(e.currentTarget.value)
                 adjustTextareaHeight($inputField);
             }
+        }
+
+        $resetField.onclick = function($e) {
+            $e.preventDefault();
+            $inputField.value = '';
+            $charactersCurrent.textContent = '0';
         }
 
         // Functions
@@ -90,6 +95,7 @@
             $characters.classList.add('input__box-characters--active');
             $overlay.classList.add('overlay__input__box--active');
             $titleElement.classList.add('input__box-title--absolute');
+            $characters.classList.add('input__box-characters--active');
 
             // Activate tooltip
             if ($tooltipStatus) $tooltip.classList.add('input__box-tooltip--active');
@@ -101,9 +107,9 @@
 
         function inputFieldInactive($e) {
             $inputField.classList.remove('input__box-field--active');
-            $characters.classList.remove('input__box-characters--active');
             $overlay.classList.remove('overlay__input__box--active');
             $titleElement.classList.remove('input__box-title--absolute');
+            $characters.classList.remove('input__box-characters--active');
             
             // Inactive Tooltip
             if ($tooltipStatus) {
