@@ -311,6 +311,11 @@ input:-webkit-autofill {
 .input__box .input__box-tooltip-button i {
     margin-right: 5px;
 }
+.input__box .input__box-tooltip-link {
+    text-decoration: none;
+    color: #3176C6;
+    margin-bottom: 5px;
+}
 
 @media screen and (max-width: 768px) {
     .input__box .input__box-tooltip-button {

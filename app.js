@@ -169,19 +169,6 @@
                     }
                 }
             }
-
-            // if ($current > 0 && $current < $minLength || $current > $maxLength) {
-            //     $characters.classList.add('input__box-characters--active');
-            //     $minValidationElement.classList.remove('input__box-minvalidation--active');
-            //     if ($type == 'textarea') {
-            //         $minValidationElement.classList.add('input__box-minvalidation--active');
-            //         $minValidationElement.classList.add('input__box-minvalidation--textarea');
-            //     } else {
-            //         $minValidationElement.classList.add('input__box-minvalidation--active');
-            //     }
-            // }
-
-
         }
 
         function limitCharacters($e) {
@@ -265,6 +252,7 @@
             let $buttonTooltip = document.createElement('button');
             let $videoMainTooltip = document.createElement('div');
             let $videoSourceTooltip = document.createElement('source');
+            let $linkTooltip = document.createElement('a');
 
             let $textSmall = $inputBox.hasAttribute('textsmall') ? $inputBox.attributes.textsmall.textContent : '';
             let $resume = $inputBox.hasAttribute('resume') ? $inputBox.attributes.resume.textContent : '';
@@ -272,6 +260,8 @@
             let $imageAxis = $inputBox.hasAttribute('image-axis') ? $inputBox.attributes['image-axis'].textContent : '';
             let $button = $inputBox.hasAttribute('button') ? $inputBox.attributes['button'].textContent : '';
             let $video = $inputBox.hasAttribute('video') ? $inputBox.attributes['video'].textContent : '';
+            let $link = $inputBox.hasAttribute('link') ? $inputBox.attributes['link'].textContent : '';
+
 
             // Assigning classes
             $tooltip.className = 'input__box-tooltip';
@@ -283,6 +273,7 @@
             if ($imageAxis != '') $tooltip.classList.add('input__box-tooltip--axis-x');
             $buttonTooltip.className = 'input__box-tooltip-button';
             $videoMainTooltip.className = 'input__box-tooltip-video';
+            $linkTooltip.className = 'input__box-tooltip-link';
 
             // Assigning attributes
             $titleTooltip.textContent = $title;
@@ -295,19 +286,21 @@
             $videoTooltip.loop = true;
             $videoTooltip.muted = true;
             $videoTooltip.play();
+            $linkTooltip.textContent = $link.split('|')[0];
+            $linkTooltip.href = $link.split('|')[1];
+            $linkTooltip.target = '__blank'; 
+
             // Events
             $tooltip.onmouseenter = function($e) {
-                $videoMainTooltip.parentElement.style.height = $videoMainTooltip.parentElement.clientHeight + 'px';
+                if ($video != '') $videoMainTooltip.parentElement.style.height = $videoMainTooltip.parentElement.clientHeight + 'px';
             }
             $videoMainTooltip.onmouseenter = function($e) {
                 $videoTooltip.muted = false;
                 $videoMainTooltip.classList.add('input__box-tooltip-video--hover');
-                console.log($videoMainTooltip.parentElement.clientHeight)
             }
             $videoMainTooltip.onmouseout = function($e) {
                 $videoTooltip.muted = true;
                 $videoMainTooltip.classList.remove('input__box-tooltip-video--hover');
-                // calculateTooltipPosition($inputField, $tooltip);
             }
 
             // Append
@@ -323,6 +316,7 @@
             }
 
             $tooltipInfo.appendChild($titleTooltip);
+            if ($link != '') $tooltipInfo.appendChild($linkTooltip);
             if ($textSmall != '') $tooltipInfo.appendChild($paragraphTooltip);
             if ($resume != '') $tooltipInfo.appendChild($resumeTooltip);
             if ($button != '') $tooltipInfo.appendChild($buttonTooltip);
