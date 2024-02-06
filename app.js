@@ -7,9 +7,10 @@
 
     $inputsBox.map(($inputBox, $indexBox) => {
 
-        // Input type
+        // Input type - Importants
         let $type = $inputBox.attributes.type.textContent;
         let $tooltipStatus = returnBoolean($inputBox.attributes.tooltip.textContent);
+        let $videoTooltip = document.createElement('video');
 
         // Elements
         let $inputField = $type == 'input' ? document.createElement('input') : document.createElement('textarea');
@@ -61,10 +62,12 @@
 
         $inputField.onfocus = function ($e) {
             inputFieldActive();
+            if ($inputBox.hasAttribute('video')) $videoTooltip.play();
         };
 
         $inputField.onblur = function ($e) {
             inputFieldInactive();
+            if ($inputBox.hasAttribute('video')) $videoTooltip.pause();
         };
 
         if ($type == 'textarea') {
@@ -98,7 +101,7 @@
             $overlay.classList.add('overlay__input__box--active');
             $titleElement.classList.add('input__box-title--absolute');
             $characters.classList.add('input__box-characters--active');
-            $minValidationElement.classList.add('input__box-minvalidation--active');
+            
             // Activate tooltip
             if ($tooltipStatus) $tooltip.classList.add('input__box-tooltip--active');
             calculateTooltipPosition($inputField, $tooltip);
@@ -106,13 +109,17 @@
                 calculateTooltipPosition($inputField, $tooltip);
             });
         }
-
+        
         function inputFieldInactive($e) {
             $inputField.classList.remove('input__box-field--active');
             $overlay.classList.remove('overlay__input__box--active');
             $titleElement.classList.remove('input__box-title--absolute');
             $characters.classList.remove('input__box-characters--active');
             $minValidationElement.classList.remove('input__box-minvalidation--active');
+            if ($inputField.value.length == 0) {
+                $minValidationElement.classList.add('input__box-minvalidation--active');
+                inputFieldErrorActive();
+            }
             // Inactive Tooltip
             if ($tooltipStatus) {
                 $tooltip.classList.remove('input__box-tooltip--active');
@@ -120,25 +127,31 @@
             resetValuesTooltip();
         }
 
+        function inputFieldErrorActive() {
+            $characters.classList.add('input__box-characters--error');
+            $inputField.classList.add('input__box-field--error');
+            $titleElement.classList.add('input__box-title--error');
+        }
+
+        function inputFieldErrorInactive() {
+            $characters.classList.remove('input__box-characters--error');
+            $inputField.classList.remove('input__box-field--error');
+            $titleElement.classList.remove('input__box-title--error');
+        }
+
         function validationCharacters($e) {
             let $current = $e.currentTarget.value.length;
             if ($current == 0) {
-                $characters.classList.remove('input__box-characters--error');
-                $inputField.classList.remove('input__box-field--error');
-                $titleElement.classList.remove('input__box-title--error');
-                $minValidationElement.classList.remove('input__box-minvalidation--active');
+                inputFieldErrorInactive();
+                $minValidationElement.classList.add('input__box-minvalidation--active');
             }
 
             if ($current > 0 && $current < $minLength || $current > $maxLength > $maxLength) {
-                $characters.classList.add('input__box-characters--error');
-                $inputField.classList.add('input__box-field--error');
-                $titleElement.classList.add('input__box-title--error');
+                inputFieldErrorActive();
                 $verifiedField.classList.remove('input__box-verified--active');
             } else {
                 if ($current > 0) {
-                    $characters.classList.remove('input__box-characters--error');
-                    $inputField.classList.remove('input__box-field--error');
-                    $titleElement.classList.remove('input__box-title--error');
+                    inputFieldErrorInactive();
                     $verifiedField.classList.add('input__box-verified--active');
                     if ($type == 'textarea') {
                         $minValidationElement.classList.remove('input__box-minvalidation--active');
@@ -184,8 +197,8 @@
                 const $left = $x - $widthTooltip / 2 + $inputBox.offsetWidth / 2;
                 const $top = $y - $heightTooltip - 20;
                 $tooltip.style.left = `${ $left }px`;
-
-                if ($positionEl.top < 300) {
+                console.log($positionEl.top)
+                if ($positionEl.top < 250) {
                     $tooltip.style.top = `${ ($inputBox.clientHeight + 23) }px`;
                     $tooltip.classList.add('input__box-tooltip--bottom');
                 } else {
@@ -210,10 +223,13 @@
 
         function resetValuesTooltip() {
             if ($tooltip != '') {
-                $tooltip.style.top = 0;
-                $tooltip.style.left = 0;
+                $tooltip.style.top = '-254px';
+                $tooltip.style.left = "19vw";
+                // $tooltip.style.transform = 'translate(-50%, 0)';
             }
         }
+
+        resetValuesTooltip()
 
         // Append
         $titleElement.appendChild($verifiedField);
@@ -238,8 +254,8 @@
             let $imageTooltipImg = document.createElement('img');
             let $buttonTooltip = document.createElement('button');
             let $videoMainTooltip = document.createElement('div');
-            let $videoTooltip = document.createElement('video');
             let $videoSourceTooltip = document.createElement('source');
+
             let $textSmall = $inputBox.hasAttribute('textsmall') ? $inputBox.attributes.textsmall.textContent : '';
             let $resume = $inputBox.hasAttribute('resume') ? $inputBox.attributes.resume.textContent : '';
             let $image = $inputBox.hasAttribute('image') ? $inputBox.attributes.image.textContent : '';
@@ -267,17 +283,21 @@
             $videoSourceTooltip.src = $video;
             $videoSourceTooltip.type = 'video/mp4';
             $videoTooltip.loop = true;
-
+            $videoTooltip.muted = true;
+            $videoTooltip.play();
             // Events
+            $tooltip.onmouseenter = function($e) {
+                $videoMainTooltip.parentElement.style.height = $videoMainTooltip.parentElement.clientHeight + 'px';
+            }
             $videoMainTooltip.onmouseenter = function($e) {
-                $videoTooltip.play();
+                $videoTooltip.muted = false;
                 $videoMainTooltip.classList.add('input__box-tooltip-video--hover');
-                calculateTooltipPosition($inputField, $tooltip);
+                console.log($videoMainTooltip.parentElement.clientHeight)
             }
             $videoMainTooltip.onmouseout = function($e) {
-                $videoTooltip.pause();
+                $videoTooltip.muted = true;
                 $videoMainTooltip.classList.remove('input__box-tooltip-video--hover');
-                calculateTooltipPosition($inputField, $tooltip);
+                // calculateTooltipPosition($inputField, $tooltip);
             }
 
             // Append
