@@ -1,5 +1,3 @@
-
-
 (function () {
     console.log('App JS')
     'use strict';
@@ -12,7 +10,7 @@
         // Input type
         let $type = $inputBox.attributes.type.textContent;
         let $tooltipStatus = returnBoolean($inputBox.attributes.tooltip.textContent);
-        
+
         // Elements
         let $inputField = $type == 'input' ? document.createElement('input') : document.createElement('textarea');
         let $titleElement = document.createElement('span');
@@ -49,6 +47,7 @@
         $resetField.classList.add('material-icons-outlined', 'input__box-reset');
         $minValidationElement.classList.add('input__box-minvalidation')
         $verifiedField.classList.add('material-icons', 'input__box-verified');
+        if ($type == 'textarea') $minValidationElement.classList.add('input__box-minvalidation--textarea');
 
         // Events
         $inputField.onkeyup = function ($e) {
@@ -60,11 +59,11 @@
             preventExtraSpace($e);
         };
 
-        $inputField.onfocus = function($e) {
+        $inputField.onfocus = function ($e) {
             inputFieldActive();
         };
 
-        $inputField.onblur = function($e) {
+        $inputField.onblur = function ($e) {
             inputFieldInactive();
         };
 
@@ -74,10 +73,13 @@
             }
         }
 
-        $resetField.onclick = function($e) {
+        $resetField.onclick = function ($e) {
             $e.preventDefault();
             $inputField.value = '';
             $charactersCurrent.textContent = '0';
+            if ($type == 'textarea') {
+                resetTextareaHeight($inputField);
+            }
         }
 
         // Functions
@@ -96,7 +98,7 @@
             $overlay.classList.add('overlay__input__box--active');
             $titleElement.classList.add('input__box-title--absolute');
             $characters.classList.add('input__box-characters--active');
-
+            $minValidationElement.classList.add('input__box-minvalidation--active');
             // Activate tooltip
             if ($tooltipStatus) $tooltip.classList.add('input__box-tooltip--active');
             calculateTooltipPosition($inputField, $tooltip);
@@ -110,39 +112,44 @@
             $overlay.classList.remove('overlay__input__box--active');
             $titleElement.classList.remove('input__box-title--absolute');
             $characters.classList.remove('input__box-characters--active');
-            
+            $minValidationElement.classList.remove('input__box-minvalidation--active');
             // Inactive Tooltip
             if ($tooltipStatus) {
                 $tooltip.classList.remove('input__box-tooltip--active');
-            } 
-        }
-
-        function inputFieldError($e) {
-            $inputField.classList.add('input__box-field--error');
+            }
+            resetValuesTooltip();
         }
 
         function validationCharacters($e) {
             let $current = $e.currentTarget.value.length;
+            if ($current == 0) {
+                $characters.classList.remove('input__box-characters--error');
+                $inputField.classList.remove('input__box-field--error');
+                $titleElement.classList.remove('input__box-title--error');
+                $minValidationElement.classList.remove('input__box-minvalidation--active');
+            }
 
-            if ($current < $minLength || $current > $maxLength) {
+            if ($current > 0 && $current < $minLength || $current > $maxLength > $maxLength) {
                 $characters.classList.add('input__box-characters--error');
                 $inputField.classList.add('input__box-field--error');
                 $titleElement.classList.add('input__box-title--error');
                 $verifiedField.classList.remove('input__box-verified--active');
             } else {
-                $characters.classList.remove('input__box-characters--error');
-                $inputField.classList.remove('input__box-field--error');
-                $titleElement.classList.remove('input__box-title--error');
-                $verifiedField.classList.add('input__box-verified--active');
-                if ($type == 'textarea') {
-                    $minValidationElement.classList.remove('input__box-minvalidation--active');
-                    $minValidationElement.classList.remove('input__box-minvalidation--textarea');
-                } else {
-                    $minValidationElement.classList.remove('input__box-minvalidation--active');
+                if ($current > 0) {
+                    $characters.classList.remove('input__box-characters--error');
+                    $inputField.classList.remove('input__box-field--error');
+                    $titleElement.classList.remove('input__box-title--error');
+                    $verifiedField.classList.add('input__box-verified--active');
+                    if ($type == 'textarea') {
+                        $minValidationElement.classList.remove('input__box-minvalidation--active');
+                        $minValidationElement.classList.remove('input__box-minvalidation--textarea');
+                    } else {
+                        $minValidationElement.classList.remove('input__box-minvalidation--active');
+                    }
                 }
             }
 
-            if ($current >= 0 && $current < $minLength || $current > $maxLength) {
+            if ($current > 0 && $current < $minLength || $current > $maxLength) {
                 $characters.classList.add('input__box-characters--active');
                 if ($type == 'textarea') {
                     $minValidationElement.classList.add('input__box-minvalidation--active');
@@ -151,42 +158,61 @@
                     $minValidationElement.classList.add('input__box-minvalidation--active');
                 }
             }
-            
+
         }
 
         function limitCharacters($e) {
             $e.currentTarget.value = $e.currentTarget.value.substring(0, $maxLength);
         }
-    
+
         function returnBoolean($e) {
             return $e == 'true' ? true : false;
         }
 
         function calculateTooltipPosition($inputBox, $tooltip) {
             if ($tooltipStatus) {
-                 // Calculating the coordinates
+                let $positionEl = $tooltip.getBoundingClientRect();
+                // Calculating the coordinates
                 const $x = $inputBox.offsetLeft;
                 const $y = $inputBox.offsetTop;
-
+                
                 // We calculate the size of the tooltip
                 const $widthTooltip = $tooltip.clientWidth;
                 const $heightTooltip = $tooltip.clientHeight;
-
+                
                 // We calculate where we will position the tooltip
                 const $left = $x - $widthTooltip / 2 + $inputBox.offsetWidth / 2;
                 const $top = $y - $heightTooltip - 20;
                 $tooltip.style.left = `${ $left }px`;
-                $tooltip.style.top = `${ $top }px`;
+
+                if ($positionEl.top < 300) {
+                    $tooltip.style.top = `${ ($inputBox.clientHeight + 23) }px`;
+                    $tooltip.classList.add('input__box-tooltip--bottom');
+                } else {
+                    $tooltip.style.top = `${ $top }px`;
+                }
             }
         }
-
-        function adjustTextareaHeight(textarea) {
-            textarea.style.height = "auto";
-            textarea.style.height = textarea.scrollHeight + "px";
-            const inputBox = textarea.closest(".input__box");
-            inputBox.style.height = textarea.style.height;
+        
+        function adjustTextareaHeight($textarea) {
+            $textarea.style.height = "auto";
+            $textarea.style.height = $textarea.scrollHeight + "px";
+            const $inputBox = $textarea.closest(".input__box");
+            $inputBox.style.height = $textarea.style.height;
         }
 
+        function resetTextareaHeight($textarea) {
+            $textarea.style.height = "98px";
+            const $inputBox = $textarea.closest(".input__box");
+            $inputBox.style.height = $textarea.style.height;
+        }
+
+        function resetValuesTooltip() {
+            if ($tooltip != '') {
+                $tooltip.style.top = 0;
+                $tooltip.style.left = 0;
+            }
+        }
 
         // Append
         $titleElement.appendChild($verifiedField);
@@ -210,11 +236,15 @@
             let $imageTooltip = document.createElement('div');
             let $imageTooltipImg = document.createElement('img');
             let $buttonTooltip = document.createElement('button');
+            let $videoMainTooltip = document.createElement('div');
+            let $videoTooltip = document.createElement('video');
+            let $videoSourceTooltip = document.createElement('source');
             let $textSmall = $inputBox.hasAttribute('textsmall') ? $inputBox.attributes.textsmall.textContent : '';
             let $resume = $inputBox.hasAttribute('resume') ? $inputBox.attributes.resume.textContent : '';
             let $image = $inputBox.hasAttribute('image') ? $inputBox.attributes.image.textContent : '';
             let $imageAxis = $inputBox.hasAttribute('image-axis') ? $inputBox.attributes['image-axis'].textContent : '';
             let $button = $inputBox.hasAttribute('button') ? $inputBox.attributes['button'].textContent : '';
+            let $video = $inputBox.hasAttribute('video') ? $inputBox.attributes['video'].textContent : '';
 
             // Assigning classes
             $tooltip.className = 'input__box-tooltip';
@@ -225,6 +255,7 @@
             $imageTooltip.className = 'input__box-tooltip-img';
             if ($imageAxis != '') $tooltip.classList.add('input__box-tooltip--axis-x');
             $buttonTooltip.className = 'input__box-tooltip-button';
+            $videoMainTooltip.className = 'input__box-tooltip-video';
 
             // Assigning attributes
             $titleTooltip.textContent = $title;
@@ -232,12 +263,34 @@
             $resumeTooltip.textContent = $resume;
             $imageTooltipImg.src = $image;
             $buttonTooltip.innerHTML = '<i class="material-icons-outlined">school</i>' + $button;
+            $videoSourceTooltip.src = $video;
+            $videoSourceTooltip.type = 'video/mp4';
+            $videoTooltip.loop = true;
+
+            // Events
+            $videoMainTooltip.onmouseenter = function($e) {
+                $videoTooltip.play();
+                $videoMainTooltip.classList.add('input__box-tooltip-video--hover');
+                calculateTooltipPosition($inputField, $tooltip);
+            }
+            $videoMainTooltip.onmouseout = function($e) {
+                $videoTooltip.pause();
+                $videoMainTooltip.classList.remove('input__box-tooltip-video--hover');
+                calculateTooltipPosition($inputField, $tooltip);
+            }
 
             // Append
             if ($image != '') {
                 $imageTooltip.appendChild($imageTooltipImg);
                 $tooltip.appendChild($imageTooltip);
             }
+
+            if ($video != '') {
+                $videoTooltip.appendChild($videoSourceTooltip);
+                $videoMainTooltip.appendChild($videoTooltip);
+                $tooltip.appendChild($videoMainTooltip);
+            }
+
             $tooltipInfo.appendChild($titleTooltip);
             if ($textSmall != '') $tooltipInfo.appendChild($paragraphTooltip);
             if ($resume != '') $tooltipInfo.appendChild($resumeTooltip);
@@ -245,7 +298,7 @@
             $tooltip.appendChild($tooltipInfo);
             $inputBox.appendChild($tooltip);
         }
-        
+
 
 
     });
