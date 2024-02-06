@@ -115,7 +115,7 @@
             $overlay.classList.remove('overlay__input__box--active');
             $titleElement.classList.remove('input__box-title--absolute');
             $characters.classList.remove('input__box-characters--active');
-            $minValidationElement.classList.remove('input__box-minvalidation--active');
+            
             if ($inputField.value.length == 0) {
                 $minValidationElement.classList.add('input__box-minvalidation--active');
                 inputFieldErrorActive();
@@ -149,6 +149,14 @@
             if ($current > 0 && $current < $minLength || $current > $maxLength > $maxLength) {
                 inputFieldErrorActive();
                 $verifiedField.classList.remove('input__box-verified--active');
+                $characters.classList.add('input__box-characters--active');
+                $minValidationElement.classList.remove('input__box-minvalidation--active');
+                if ($type == 'textarea') {
+                    $minValidationElement.classList.add('input__box-minvalidation--active');
+                    $minValidationElement.classList.add('input__box-minvalidation--textarea');
+                } else {
+                    $minValidationElement.classList.add('input__box-minvalidation--active');
+                }
             } else {
                 if ($current > 0) {
                     inputFieldErrorInactive();
@@ -162,15 +170,17 @@
                 }
             }
 
-            if ($current > 0 && $current < $minLength || $current > $maxLength) {
-                $characters.classList.add('input__box-characters--active');
-                if ($type == 'textarea') {
-                    $minValidationElement.classList.add('input__box-minvalidation--active');
-                    $minValidationElement.classList.add('input__box-minvalidation--textarea');
-                } else {
-                    $minValidationElement.classList.add('input__box-minvalidation--active');
-                }
-            }
+            // if ($current > 0 && $current < $minLength || $current > $maxLength) {
+            //     $characters.classList.add('input__box-characters--active');
+            //     $minValidationElement.classList.remove('input__box-minvalidation--active');
+            //     if ($type == 'textarea') {
+            //         $minValidationElement.classList.add('input__box-minvalidation--active');
+            //         $minValidationElement.classList.add('input__box-minvalidation--textarea');
+            //     } else {
+            //         $minValidationElement.classList.add('input__box-minvalidation--active');
+            //     }
+            // }
+
 
         }
 
