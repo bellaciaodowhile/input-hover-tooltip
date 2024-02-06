@@ -190,6 +190,7 @@
                     $tooltip.classList.add('input__box-tooltip--bottom');
                 } else {
                     $tooltip.style.top = `${ $top }px`;
+                    $tooltip.classList.remove('input__box-tooltip--bottom');
                 }
             }
         }
