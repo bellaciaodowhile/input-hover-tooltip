@@ -26,6 +26,8 @@ textsmall="Lorem ipsum..." // String - Mensaje
 
 resume="Lorem ipsum..." // String - Descripción del tooltip
 
+video="path" // Recibe la ruta del video
+
 image="path" // Recibe la ruta de la imagen
 
 image-axis="x" // Indica si quiere que la imagen esté en el eje X o Y. De manera horizontal o Vertical
