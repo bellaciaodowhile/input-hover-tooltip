@@ -79,6 +79,43 @@ button="Más Info" // Recibe el texto que tendrá el botón
 ></div>
 ```
 
+### Usando el video
+
+``` HTML
+<div 
+  title="Meta-Título"
+  type="input"
+  placeholder="Agrega un Meta-Título para tu noticia"
+  class="input__box"
+  minLength="60"
+  maxLength="80"
+  tooltip="true"
+  textsmall="Para mejorar el SEO de una página web debes asignarle una descripción sintética de menos de 140 caracteres."
+  resume="Procura que esta descripción contenga la palabra clave o palabra más importante que define esta página web. Incorpora palabras complementarias que enriquezcan y acoten la búsqueda para obtener mejores resultados."
+  image="https://media.istockphoto.com/id/1148185998/vector/digital-java-code-text-computer-software-coding-vector-concept-programming-coding-script.jpg?s=612x612&w=0&k=20&c=a828FuiFmSROCCmc7glJKr1DSxakHEvpdq58D_m3TVw="
+  video="https://topiaires.fr/descargas/video.mp4"
+></div>
+```
+
+### Usando el video - horizontal
+
+``` HTML
+<div 
+  title="Meta-Título"
+  type="input"
+  placeholder="Agrega un Meta-Título para tu noticia"
+  class="input__box"
+  minLength="60"
+  maxLength="80"
+  tooltip="true"
+  textsmall="Para mejorar el SEO de una página web debes asignarle una descripción sintética de menos de 140 caracteres."
+  resume="Procura que esta descripción contenga la palabra clave o palabra más importante que define esta página web. Incorpora palabras complementarias que enriquezcan y acoten la búsqueda para obtener mejores resultados."
+  image="https://media.istockphoto.com/id/1148185998/vector/digital-java-code-text-computer-software-coding-vector-concept-programming-coding-script.jpg?s=612x612&w=0&k=20&c=a828FuiFmSROCCmc7glJKr1DSxakHEvpdq58D_m3TVw="
+  image-axis="x"
+  video="https://topiaires.fr/descargas/video.mp4"
+></div>
+```
+
 ### Usando el image-axis="x"
 
 ``` HTML
